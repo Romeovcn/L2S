@@ -1,7 +1,7 @@
 import pygame
 from enum import Enum
 
-def draw_chessboard(screen, width, height):
+def draw_chessboard(screen, width, height, snake_len):
 	BG_COLOR = (35, 39, 55)
 	SQUARE_COLOR = (24, 24, 36)
 	GREEN_APPLE_COLOR = (255, 0, 0)
@@ -13,14 +13,10 @@ def draw_chessboard(screen, width, height):
 	ROWS = 10
 	COLS = 10
 
-	background = pygame.draw.rect(screen, BG_COLOR, (100, 100, 498, 498))
-	# pygame.draw.rect(screen, (24, 24, 36), (100, 100, 95, 95))
-	# pygame.draw.rect(screen, (24, 24, 36), (100, 200, 95, 95))
-	# pygame.draw.rect(screen, (24, 24, 36), (100, 300, 95, 95))
-	# pygame.draw.rect(screen, (24, 24, 36), (100, 400, 95, 95))
-	# pygame.draw.rect(screen, (24, 24, 36), (100, 500, 95, 95))
+	screen.fill((0, 0, 0)) # Fill the screen with black
+	pygame.draw.rect(screen, BG_COLOR, (100, 100, 498, 498)) # Fill the board
 	font = pygame.font.Font(None, 36)
-	score_text = font.render(f"Score: 1", True, (255, 255, 255))
+	score_text = font.render(f"Score: {snake_len}", True, (255, 255, 255))
 	screen.blit(score_text, (10, 10))
 
 	for row in range(ROWS):
