@@ -26,6 +26,7 @@ def print_map(map):
 			else:
 				print(cell, end=" ")
 		print()
+	print()
 
 def update_snake_pos(snake_pos, pos_to_go, target_cell):
 	new_snake_pos = snake_pos.copy()
@@ -59,7 +60,7 @@ def update_map(map, snake_pos, target_cell):
 
 def move(direction, map, snake_pos):
 	"""
-	returns: "DEAD" or "ALIVE"
+	returns: 1 if player is still alive or -1 if player is dead
 	"""
 	head = snake_pos[0]
 
@@ -105,23 +106,44 @@ def move(direction, map, snake_pos):
 
 	return "ALIVE"
 
+def get_cell_value_and_coordinates(map, snake_pos, direction):
+	snake_head_pos = snake_pos[0]
+
+	if direction == "UP":
+		pos_to_go = [snake_head_pos[0] - 1, snake_head_pos[1]]
+	elif direction == "DOWN":
+		pos_to_go = [snake_head_pos[0] + 1, snake_head_pos[1]]
+	elif direction == "LEFT":
+		pos_to_go = [snake_head_pos[0], snake_head_pos[1] - 1]
+	elif direction == "RIGHT":
+		pos_to_go = [snake_head_pos[0], snake_head_pos[1] + 1]
+	else:
+		return None
+
+	target_cell = map[pos_to_go[0]][pos_to_go[1]]
+	return {"value": target_cell, "coordinates": pos_to_go}
+
+def is_move_valid(snake_pos, target_cell):
+	if len(snake_pos) < 2:
+		return True
+	elif target_cell['value'] == "S" and target_cell['coordinates'] == snake_pos[1]:
+		return False
+	return True
+
 def main():
 	map, snake_pos = generate_random_map()
-	# print_map(map)
-	# print(snake_pos)
-
-	# move("RIGHT", map, snake_pos)
-	# print_map(map)
-	# print(snake_pos)
-	
 	pygame.init()
 	clock = pygame.time.Clock()
-	width, height = 1000, 1000
-	screen = pygame.display.set_mode((width, height))
+	width, height = 700, 700
+	screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
+	pygame.display.set_caption("Snake AI")
+
+	score = 3
+	old_direction = None
 	direction = None
 	running = True
 	last_move_time = 0
-	draw_chessboard(screen, width // 10)
+	draw_chessboard(screen, width, height)
 	draw_game(screen, map)
 	print_map(map)
 
@@ -138,24 +160,36 @@ def main():
 	
 				# Need to check if going backward
 				if key[pygame.K_w]:
+					old_direction = direction if direction != None else "UP"
 					direction = "UP"
 				elif key[pygame.K_s]:
+					old_direction = direction if direction != None else "DOWN"
 					direction = "DOWN"
 				elif key[pygame.K_a]:
+					old_direction = direction if direction != None else "LEFT"
 					direction = "LEFT"
 				elif key[pygame.K_d]:
+					old_direction = direction if direction != None else "RIGHT"
 					direction = "RIGHT"
 
 		current_time = pygame.time.get_ticks()
-		if current_time - last_move_time >= 200:
-			player = move(direction, map, snake_pos)
-			if player == "DEAD":
-				running = False
-			elif player == "ALIVE":
-				draw_chessboard(screen, width // 10)
-				draw_game(screen, map)
-				print_map(map)
-			last_move_time = current_time  #
+		if current_time - last_move_time >= 300 and direction:
+			target_cell = get_cell_value_and_coordinates(map, snake_pos, direction)
+			if not is_move_valid(snake_pos, target_cell):
+				direction = old_direction
+			# print(is_move_valid(snake_pos, target_cell))
+			# Check move validity
+			# Check death
+			# Update map and snake_pos and direction
+			# Update display if change is made
+			# is_alive = move(direction, map, snake_pos)
+			# if is_alive == "DEAD":
+			# 	running = False
+			# elif is_alive == "ALIVE":
+			# 	draw_chessboard(screen, width, height)
+			# 	draw_game(screen, map)
+			# 	print_map(map)
+			last_move_time = current_time
 	
 		pygame.display.flip()
 		clock.tick(20)

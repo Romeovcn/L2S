@@ -1,42 +1,62 @@
 import pygame
 from enum import Enum
 
-def draw_chessboard(screen, SQUARE_SIZE=100):
+def draw_chessboard(screen, width, height):
+	BG_COLOR = (35, 39, 55)
+	SQUARE_COLOR = (24, 24, 36)
+	GREEN_APPLE_COLOR = (255, 0, 0)
+	RED_APPLE_COLOR = (0, 255, 0)
+	WALL_COLOR = (255, 255, 255)
+
+	GAME_SIZE = min(width, height)
+	SQUARE_SIZE = 48
 	ROWS = 10
 	COLS = 10
-	PAIR = (34, 129, 34)
-	IMPAIR = (34, 120, 34)
-	GREEN_APPLE = (255, 0, 0)
-	RED_APPLE = (0, 255, 0)
-	WALL = (255, 255, 255)
+
+	background = pygame.draw.rect(screen, BG_COLOR, (100, 100, 498, 498))
+	# pygame.draw.rect(screen, (24, 24, 36), (100, 100, 95, 95))
+	# pygame.draw.rect(screen, (24, 24, 36), (100, 200, 95, 95))
+	# pygame.draw.rect(screen, (24, 24, 36), (100, 300, 95, 95))
+	# pygame.draw.rect(screen, (24, 24, 36), (100, 400, 95, 95))
+	# pygame.draw.rect(screen, (24, 24, 36), (100, 500, 95, 95))
+	font = pygame.font.Font(None, 36)
+	score_text = font.render(f"Score: 1", True, (255, 255, 255))
+	screen.blit(score_text, (10, 10))
 
 	for row in range(ROWS):
 		for col in range(COLS):
-			color = PAIR if (row + col) % 2 == 0 else IMPAIR
-			pygame.draw.rect(screen, color, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+			pygame.draw.rect(screen, SQUARE_COLOR, (col * 50 + 100, row * 50 + 100, 48, 48))
 
 def draw_snake(screen, snake_pos):
 	pixel_pos = pygame.Vector2(snake_pos[0] * 100 + 50, snake_pos[1] * 100 + 50)
 	pygame.draw.circle(screen, "red", pixel_pos, 50)
 
 def draw_game(screen, map):
-	class Colors(Enum):
-		SNAKE_HEAD = (255, 255, 0)
-		SNAKE_BODY = (255, 255, 0)
-		GREEN_APPLE = (0, 255, 0)
-		RED_APPLE = (255, 0, 0)
-		WALL = (0, 0, 0)
+	GREEN_APPLE_COLOR = (0, 255, 0)
+	RED_APPLE_COLOR = (255, 0, 0)
+	WALL_COLOR = (0, 0, 0)
+	SNAKE_COLOR = (255, 255, 255)
+	HEAD_COLOR = (200, 200, 200)
+
+	FULL_SQUARE_SIZE = 50
+	SQUARE_SIZE = 48
+	GAME_START_OFFSET = 100
 
 	for y in range(10):
 		for x in range(10):
 			cell = map[y][x]
+			x_offset = x * FULL_SQUARE_SIZE + GAME_START_OFFSET
+			y_offset = y * FULL_SQUARE_SIZE + GAME_START_OFFSET
 			if cell == "G":
-				pygame.draw.circle(screen, (0, 255, 0), (x * 100 + 50, y * 100 + 50), 50)
+				color = GREEN_APPLE_COLOR
 			elif cell == "R":
-				pygame.draw.circle(screen, (255, 0, 0), (x * 100 + 50, y * 100 + 50), 50)
+				color = RED_APPLE_COLOR
 			elif cell == "W":
-				pygame.draw.rect(screen, (0, 100, 0), (x * 100, y * 100, 100, 100))
+				color = WALL_COLOR
 			elif cell == "H":
-				pygame.draw.circle(screen, (0, 0, 100), (x * 100 + 50, y * 100 + 50), 50)
+				color = HEAD_COLOR
 			elif cell == "S":
-				pygame.draw.circle(screen, (0, 0, 255), (x * 100 + 50, y * 100 + 50), 50)
+				color = SNAKE_COLOR
+			
+			if cell != "0":
+				pygame.draw.rect(screen, color, (x_offset, y_offset, SQUARE_SIZE, SQUARE_SIZE))
