@@ -82,5 +82,21 @@ def main():
 if __name__ == "__main__":
 	main()
 
+# The Q-Learning Algorithm
+
+# The Q-value (or action-value) represents the quality of a particular action A taken in a specific state S.
+# Specifically, it estimates the expected cumulative reward the agent can achieve if it starts in state S,
+# takes action A, and then follows the optimal policy thereafter.
+
+# Exploration / Exploitation
+
+# This phase is not part of the q-learning algorithm, but it is a common strategy used in reinforcement learning.
+# Common Strategies for Exploration/Exploitation:
+# - Epsilon-Greedy Strategy:
+# - Boltzmann Exploration:
+
+# State and Action
+
+# State are the features that describe the environment. (We must define them)
 # Action would be: UP, DOWN, LEFT, RIGHT
 # State would be: DANGER_RIGHT, DANGER_LEFT, DANGER_UP, DANGER_DOWN, APPLE_RIGHT, APPLE_LEFT, APPLE_UP, APPLE_DOWN
