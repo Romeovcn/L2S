@@ -1,15 +1,10 @@
 import time
 import pygame
 import random
+from game_algorithm.game_algo import get_cell_value_and_coordinates, print_map, is_move_valid, move, is_move_valid
+from ai_algorithm.ai import perform_AI_move
 from generate_map.generate_map import generate_random_map
-from draw_game.draw import draw_chessboard
-from draw_game.draw import draw_game
-from ai_algorithm.ai import get_all_possible_moves
-from ai_algorithm.ai import select_random_move
-from game_algorithm.game_algo import get_cell_value_and_coordinates
-from game_algorithm.game_algo import print_map
-from game_algorithm.game_algo import is_move_valid
-from game_algorithm.game_algo import move
+from draw_game.draw import draw_chessboard, draw_game
 
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -18,65 +13,68 @@ CYAN = "\033[36m"
 RESET = "\033[0m"
 
 def main():
-	map, snake_pos = generate_random_map()
 	pygame.init()
-	clock = pygame.time.Clock()
 	width, height = 700, 700
 	screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
 	pygame.display.set_caption("Snake AI")
 
-	direction = None
 	running = True
-	draw_chessboard(screen, width, height, 3)
-	draw_game(screen, map)
-	print_map(map)
+	epsilon = 1.0         # Exploration rate
+	min_epsilon = 0.01    # Minimum exploration rate
+	epsilon_decay = 0.995 # Decay factor for epsilon
+	q_table = {}          # Q-table
 
-	while running:
-		for event in pygame.event.get():
-			# Check for QUIT event
-			if event.type == pygame.QUIT:
-				running = False
-				break
-			# Check for KEYDOWN event
-			if event.type == pygame.KEYDOWN:
-				key = pygame.key.get_pressed()
-				if key[pygame.K_ESCAPE] or key[pygame.K_q]:
+	for episode in range(1000):
+		print(f"Episode: {episode}")
+		map, snake_pos = generate_random_map()
+		direction = None
+		draw_chessboard(screen, width, height, 3)
+		draw_game(screen, map)
+		pygame.display.flip()
+		print_map(map)
+
+		while running:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT: # Check for QUIT event
 					running = False
 					break
-				# Need to check if going backward
-				elif key[pygame.K_w]:
-					direction = "UP" 
-				elif key[pygame.K_s]:
-					direction = "DOWN" 
-				elif key[pygame.K_a]:
-					direction = "LEFT" 
-				elif key[pygame.K_d]:
-					direction = "RIGHT"
-				elif key[pygame.K_SPACE]:
-					possible_moves = get_all_possible_moves(map, snake_pos)
-					random_move = select_random_move(possible_moves)
-					direction = random_move['direction']
-					# print(select_random_move(possible_moves))
-					# Get list of possible moves
-					# Select the best move or random move
-					# direction = "AI"
-					# continue
+				if event.type == pygame.KEYDOWN: # Check for KEYDOWN event
+					key = pygame.key.get_pressed()
+					if key[pygame.K_ESCAPE] or key[pygame.K_q]:
+						running = False
+						break
+					elif key[pygame.K_w]:
+						direction = "UP" 
+					elif key[pygame.K_s]:
+						direction = "DOWN" 
+					elif key[pygame.K_a]:
+						direction = "LEFT" 
+					elif key[pygame.K_d]:
+						direction = "RIGHT"
+					elif key[pygame.K_SPACE]:
+						direction = perform_AI_move(map, snake_pos, epsilon, q_table)
 
+			if direction:
 				target_cell = get_cell_value_and_coordinates(map, snake_pos, direction)
 				move_validity = is_move_valid(snake_pos, target_cell)
 				if move_validity == 0:
 					pass
 				elif move_validity == -1:
-					running = False
 					print(f"{RED}YOU ARE DEAD{RESET}")
+					break
 				else:
 					move(target_cell, map, snake_pos)
 					draw_chessboard(screen, width, height, len(snake_pos))
 					draw_game(screen, map)
+					pygame.display.flip()
 					print_map(map)
+					epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
 					pass
+				direction = None
+
+		if not running:
+			break
 	
-		pygame.display.flip()
 	pygame.quit()
 
 if __name__ == "__main__":
