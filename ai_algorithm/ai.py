@@ -4,11 +4,10 @@ from game_algorithm.game_algo import is_move_valid
 
 def perform_AI_move(map, snake_pos, epsilon, q_table):
 	possible_moves = get_all_possible_moves(map, snake_pos)# Get list of possible moves
-	action = choose_action(epsilon, possible_moves) # Choose between Explore or Exploit
-	# print(action)
 	state = get_state(map, snake_pos)
-	q_table[state] = update_q_value(map, snake_pos, q_table, state, action['direction'])
-	return None
+	action = choose_action(epsilon, possible_moves, q_table, state) # Choose between Explore or Exploit
+	q_table[state] = update_q_value(map, snake_pos, q_table, state, action)
+	return action # CHANGE THIS
 
 def get_state(map, snake_pos):
 	DANGER_UP = 0
@@ -64,16 +63,27 @@ def get_state(map, snake_pos):
 	state = f"DU_{DANGER_UP} DD_{DANGER_DOWN} DL_{DANGER_LEFT} DR_{DANGER_RIGHT}, GU_{GREEN_UP} GD_{GREEN_DOWN} GL_{GREEN_LEFT} GR_{GREEN_RIGHT}, RU_{RED_UP} RD_{RED_DOWN} RL_{RED_LEFT} RR_{RED_RIGHT}"
 	return state
 
-def choose_action(epsilon, possible_moves):
+def choose_action(epsilon, possible_moves, q_table, state):
 	if random.uniform(0, 1) < epsilon:
 		# Explore: choose a random action
 		print("Exploring...")
 		action = select_random_move(possible_moves)
 	else:
-		print("Exploiting...")
 		# Exploit: choose the best known action in q_table
-		action = None
-		pass
+		print("Exploiting...")
+		action = get_best_move(q_table, state, possible_moves)
+		print(f"ICICICI=>{action}")
+	return action
+
+def get_best_move(q_table, state, possible_moves):
+	best_move = None
+	Q_values = q_table.get(state, None)
+	if Q_values is None:
+		return select_random_move(possible_moves)
+	action = max(possible_moves, key=Q_values.get)
+	print(possible_moves)
+	print(action)
+	print(Q_values)
 	return action
 
 def get_all_possible_moves(map, snake_pos):
@@ -84,8 +94,8 @@ def get_all_possible_moves(map, snake_pos):
 		target_cell = get_cell_value_and_coordinates(map, snake_pos, direction)
 		move_validity = is_move_valid(snake_pos, target_cell)
 		if move_validity != 0: # Check if move is not illegal
-			move = {"direction": direction, "target_cell": target_cell}
-			possible_moves.append(move)
+			# move = {"direction": direction, "target_cell": target_cell}
+			possible_moves.append(direction)
 	return possible_moves
 
 def select_random_move(possible_moves):
@@ -100,39 +110,40 @@ def get_reward(map, snake_pos, action):
 	# Moves away from both			0
 	# Survives one step (optional)	−0.1
 	target_cell = get_cell_value_and_coordinates(map, snake_pos, action)
-	if target_cell == "0":
+	if target_cell['value'] == "0":
 		return -1
-	if target_cell == "G":
-		return 10
-	if target_cell == "R":
-		return -5
-	if target_cell == "W" or target_cell == "S":
-		return -10
+	if target_cell['value'] == "G":
+		return 100
+	if target_cell['value'] == "R":
+		return -50
+	if target_cell['value'] == "W" or target_cell['value'] == "S":
+		return -100
 	return 0
 
-def get_max_q_value(q_values, state, valid_actions): # protect valid actions
-	for q_value in q_values:
-		if q_value["state"] == state:
-			q_values = q_value["Q_SCORE"]
-	return max(q_values[action] for action in valid_actions)
+# def get_max_q_value(q_values, state, valid_actions): # protect valid actions
+# 	"""
+# 	returns: {"action": "UP | DOWN | LEFT | RIGHT", "value": 123}
+# 	"""
+# 	for q_value in q_values:
+# 		if q_value["state"] == state:
+# 			q_values = q_value["Q_SCORE"]
+# 	return max(q_values[action] for action in valid_actions)
 
-def get_q_value(q_table, state, action):
-	if action != "UP" and action != "DOWN" and action != "LEFT" and action != "RIGHT":
-		raise ValueError("get_q_value(): Invalid input: action arg must be 'UP', 'DOWN', 'LEFT', or 'RIGHT'")
-	values = q_table.get(state, None)
-	if values is None:
-		return 0
-	return values[action]
+# def get_q_value(q_table, state, action):
+# 	if action != "UP" and action != "DOWN" and action != "LEFT" and action != "RIGHT":
+# 		raise ValueError("get_q_value(): Invalid input: action arg must be 'UP', 'DOWN', 'LEFT', or 'RIGHT'")
+# 	values = q_table.get(state, None)
+# 	if values is None:
+# 		return 0
+# 	return values[action]
 
-def update_q_value(map, snake_pos, q_table, state, action): # TO FIX: need to check of q_values exists before updating
-	q_values = q_table.get(state, None)
-	if q_values is None:
-		q_values = {"UP": 0, "DOWN": 0, "LEFT": 0, "RIGHT": 0}
-		q_table[state] = q_values
-
-	Q = get_q_value(q_table, state, action)
+def update_q_value(map, snake_pos, q_table, state, action): # TO FIX: need to check if q_values exists before updating
+	Q_values = q_table.get(state, {"UP": 0, "DOWN": 0, "LEFT": 0, "RIGHT": 0})
+	Q = Q_values[action]
+	max_Q = max(Q_values[action] for action in ["UP", "DOWN", "LEFT", "RIGHT"])
 	r = get_reward(map, snake_pos, action)
 	gamma = 0.9
 
-	q_values[action] = Q + 0.1 * (r + gamma * get_max_q_value(Q, "S") - Q)
-	return q_values
+	Q_values[action] = Q + 0.1 * (r + gamma * max_Q - Q)
+	print(Q_values)
+	return Q_values

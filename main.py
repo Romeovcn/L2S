@@ -51,8 +51,8 @@ def main():
 						direction = "LEFT" 
 					elif key[pygame.K_d]:
 						direction = "RIGHT"
-					elif key[pygame.K_SPACE]:
-						direction = perform_AI_move(map, snake_pos, epsilon, q_table)
+					# elif key[pygame.K_SPACE]:
+			direction = perform_AI_move(map, snake_pos, epsilon, q_table)
 
 			if direction:
 				target_cell = get_cell_value_and_coordinates(map, snake_pos, direction)
@@ -71,6 +71,8 @@ def main():
 					epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
 					pass
 				direction = None
+
+			time.sleep(0.05)
 
 		if not running:
 			break
