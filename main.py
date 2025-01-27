@@ -35,6 +35,8 @@ def perform_move(map, snake_pos, direction, game_data, screen, width, height):
 		print_map(map)
 		pass
 
+# def get_direction(snake_pos):
+
 def main():
 	pygame.init()
 	width, height = 700, 700
@@ -55,6 +57,7 @@ def main():
 		print(f"Episode: {episode}")
 		map, snake_pos = generate_random_map()
 		direction = None
+		need_update = False
 		draw_chessboard(screen, width, height, 3, game_data)
 		draw_game(screen, map)
 		pygame.display.flip()
@@ -63,17 +66,18 @@ def main():
 		while running:
 			# current_time = pygame.time.get_ticks()
 			for event in pygame.event.get():
-					running, direction, pause = check_key_events(pygame, event, running, direction, pause)
+					running, need_update, direction, pause = check_key_events(pygame, event, running, need_update, direction, pause, map, snake_pos)
 
-			if not pause:
-				direction = calculate_next_move(map, snake_pos, epsilon, q_table)
-				epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
+			# if not pause:
+			# 	direction = calculate_next_move(map, snake_pos, epsilon, q_table)
+			# 	epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
 
-			if direction:
-				print(f"Direction: {direction}")
-				if perform_move(map, snake_pos, direction, game_data, screen, width, height) == -1:
-					break
-				direction = None
+			# if need_update:
+			# 	print(f"Direction: {direction}")	
+			# 	if perform_move(map, snake_pos, direction, game_data, screen, width, height) == -1:
+			# 		break
+			# 	# direction = None
+			# 	need_update = False
 
 			# clock.tick(20)
 

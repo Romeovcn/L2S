@@ -56,7 +56,7 @@ def get_reward(map, snake_pos, action): # Can be optimized
 	if target_cell['value'] == "G":
 		return 10
 	if target_cell['value'] == "R":
-		return -20
+		return -10
 	if target_cell['value'] == "W" or target_cell['value'] == "S":
 		return -100
 	return 0

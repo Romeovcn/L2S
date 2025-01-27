@@ -9,8 +9,8 @@ def draw_chessboard(screen, width, height, snake_len, game_data):
 
 	GAME_SIZE = min(width, height)
 	SQUARE_SIZE = 48
-	ROWS = 10
-	COLS = 10
+	ROWS = 12
+	COLS = 12
 	best_score = game_data["best_score"]
 	nb_game = game_data["nb_game"]
 	total_score = game_data["total_score"]
@@ -18,7 +18,7 @@ def draw_chessboard(screen, width, height, snake_len, game_data):
 	average_score = round(average_score, 2)
 
 	screen.fill((0, 0, 0)) # Fill the screen with black
-	pygame.draw.rect(screen, BG_COLOR, (100, 100, 498, 498)) # Fill the board
+	pygame.draw.rect(screen, BG_COLOR, (100, 100, 598, 598)) # Fill the board
 	font = pygame.font.Font(None, 36)
 	score_text = font.render(f"Score: {snake_len}", True, (255, 255, 255))
 	best_score_text = font.render(f"Best Score: {best_score}", True, (255, 255, 255))
@@ -46,8 +46,8 @@ def draw_game(screen, map):
 	SQUARE_SIZE = 48
 	GAME_START_OFFSET = 100
 
-	for y in range(10):
-		for x in range(10):
+	for y in range(12):
+		for x in range(12):
 			cell = map[y][x]
 			x_offset = x * FULL_SQUARE_SIZE + GAME_START_OFFSET
 			y_offset = y * FULL_SQUARE_SIZE + GAME_START_OFFSET

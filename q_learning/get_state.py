@@ -1,14 +1,20 @@
+def check_up(map, snake_pos):
+	pass
+
 def get_state(map, snake_pos):
+	# Check if there is a danger in the next cell in this direction. 0: No, 1: Yes
 	DANGER_UP = 0
 	DANGER_DOWN = 0
 	DANGER_RIGHT = 0
 	DANGER_LEFT = 0
 
+	# Check if there is a green apple in this direction. 0: No, 1: Yes and no obstacles, 2: Yes in the direct next cell
 	GREEN_UP = 0
 	GREEN_DOWN = 0
 	GREEN_RIGHT = 0
 	GREEN_LEFT = 0
 
+	# Check if there is a red apple in the next cell in this direction. 0: No, 1: Yes
 	RED_UP = 0
 	RED_DOWN = 0
 	RED_RIGHT = 0
@@ -50,4 +56,7 @@ def get_state(map, snake_pos):
 		RED_RIGHT = 1
 
 	state = f"DU_{DANGER_UP} DD_{DANGER_DOWN} DL_{DANGER_LEFT} DR_{DANGER_RIGHT}, GU_{GREEN_UP} GD_{GREEN_DOWN} GL_{GREEN_LEFT} GR_{GREEN_RIGHT}, RU_{RED_UP} RD_{RED_DOWN} RL_{RED_LEFT} RR_{RED_RIGHT}"
+	print(state)
 	return state
+
+# DU_{DANGER_UP} DD_{DANGER_DOWN} DL_{DANGER_LEFT} DR_{DANGER_RIGHT}, GU_{GREEN_UP} GD_{GREEN_DOWN} GL_{GREEN_LEFT} GR_{GREEN_RIGHT}, RU_{RED_UP} RD_{RED_DOWN} RL_{RED_LEFT} RR_{RED_RIGHT}
