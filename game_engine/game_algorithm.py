@@ -1,4 +1,4 @@
-from generate_map.generate_map import generate_random_apple
+from game_engine.generate_map import generate_random_apple
 
 RED = "\033[31m"
 GREEN = "\033[32m"

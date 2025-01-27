@@ -1,10 +1,13 @@
-import time
+import cProfile
 import pygame
 import random
-from game_algorithm.game_algo import get_cell_value_and_coordinates, print_map, is_move_valid, move, is_move_valid
-from ai_algorithm.ai import perform_AI_move
-from generate_map.generate_map import generate_random_map
-from draw_game.draw import draw_chessboard, draw_game
+import time
+
+from game_engine.game_algorithm import get_cell_value_and_coordinates, print_map, is_move_valid, move
+from game_engine.generate_map import generate_random_map
+from game_engine.draw import draw_chessboard, draw_game
+from game_engine.events import check_key_events
+from q_learning.ai import calculate_next_move
 
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -12,67 +15,67 @@ YELLOW = "\033[33m"
 CYAN = "\033[36m"
 RESET = "\033[0m"
 
+def perform_move(map, snake_pos, direction, game_data, screen, width, height):
+	target_cell = get_cell_value_and_coordinates(map, snake_pos, direction)
+	move_validity = is_move_valid(snake_pos, target_cell)
+	if move_validity == 0:
+		pass
+	elif move_validity == -1:
+		print(f"{RED}YOU ARE DEAD{RESET}")
+		if len(snake_pos) > game_data["best_score"]:
+			game_data["best_score"] = len(snake_pos)
+		game_data["total_score"] += len(snake_pos)
+		game_data["nb_game"] += 1
+		return -1
+	else:
+		move(target_cell, map, snake_pos)
+		draw_chessboard(screen, width, height, len(snake_pos), game_data)
+		draw_game(screen, map)
+		pygame.display.flip()
+		print_map(map)
+		pass
+
 def main():
 	pygame.init()
 	width, height = 700, 700
 	screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
 	pygame.display.set_caption("Snake AI")
+	clock = pygame.time.Clock()
 
+	game_data = {"epoch": 0, "nb_game": 0, "total_score": 0, "best_score": 0}
+	speed = 0.5
 	running = True
-	epsilon = 1.0         # Exploration rate
-	min_epsilon = 0.01    # Minimum exploration rate
-	epsilon_decay = 0.995 # Decay factor for epsilon
-	q_table = {}          # Q-table
+	pause = False
+	epsilon = 1.0
+	min_epsilon = 0.01
+	epsilon_decay = 0.995
+	q_table = {}
 
 	for episode in range(1000):
 		print(f"Episode: {episode}")
 		map, snake_pos = generate_random_map()
 		direction = None
-		draw_chessboard(screen, width, height, 3)
+		draw_chessboard(screen, width, height, 3, game_data)
 		draw_game(screen, map)
 		pygame.display.flip()
 		print_map(map)
 
 		while running:
+			# current_time = pygame.time.get_ticks()
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT: # Check for QUIT event
-					running = False
-					break
-				if event.type == pygame.KEYDOWN: # Check for KEYDOWN event
-					key = pygame.key.get_pressed()
-					if key[pygame.K_ESCAPE] or key[pygame.K_q]:
-						running = False
-						break
-					elif key[pygame.K_w]:
-						direction = "UP" 
-					elif key[pygame.K_s]:
-						direction = "DOWN" 
-					elif key[pygame.K_a]:
-						direction = "LEFT" 
-					elif key[pygame.K_d]:
-						direction = "RIGHT"
-					# elif key[pygame.K_SPACE]:
-			direction = perform_AI_move(map, snake_pos, epsilon, q_table)
+					running, direction, pause = check_key_events(pygame, event, running, direction, pause)
+
+			if not pause:
+				direction = calculate_next_move(map, snake_pos, epsilon, q_table)
+				epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
 
 			if direction:
-				target_cell = get_cell_value_and_coordinates(map, snake_pos, direction)
-				move_validity = is_move_valid(snake_pos, target_cell)
-				if move_validity == 0:
-					pass
-				elif move_validity == -1:
-					print(f"{RED}YOU ARE DEAD{RESET}")
+				print(f"Direction: {direction}")
+				if perform_move(map, snake_pos, direction, game_data, screen, width, height) == -1:
 					break
-				else:
-					move(target_cell, map, snake_pos)
-					draw_chessboard(screen, width, height, len(snake_pos))
-					draw_game(screen, map)
-					pygame.display.flip()
-					print_map(map)
-					epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
-					pass
 				direction = None
 
-			time.sleep(0.05)
+			# clock.tick(20)
 
 		if not running:
 			break
@@ -80,6 +83,7 @@ def main():
 	pygame.quit()
 
 if __name__ == "__main__":
+	# cProfile.run('main()')
 	main()
 
 # The Q-Learning Algorithm

@@ -1,7 +1,6 @@
 import pygame
-from enum import Enum
 
-def draw_chessboard(screen, width, height, snake_len):
+def draw_chessboard(screen, width, height, snake_len, game_data):
 	BG_COLOR = (35, 39, 55)
 	SQUARE_COLOR = (24, 24, 36)
 	GREEN_APPLE_COLOR = (255, 0, 0)
@@ -12,12 +11,21 @@ def draw_chessboard(screen, width, height, snake_len):
 	SQUARE_SIZE = 48
 	ROWS = 10
 	COLS = 10
+	best_score = game_data["best_score"]
+	nb_game = game_data["nb_game"]
+	total_score = game_data["total_score"]
+	average_score = total_score / nb_game if nb_game > 0 else 0
+	average_score = round(average_score, 2)
 
 	screen.fill((0, 0, 0)) # Fill the screen with black
 	pygame.draw.rect(screen, BG_COLOR, (100, 100, 498, 498)) # Fill the board
 	font = pygame.font.Font(None, 36)
 	score_text = font.render(f"Score: {snake_len}", True, (255, 255, 255))
+	best_score_text = font.render(f"Best Score: {best_score}", True, (255, 255, 255))
+	av_score_text = font.render(f"Average Score: {average_score}", True, (255, 255, 255))
 	screen.blit(score_text, (10, 10))
+	screen.blit(best_score_text, (200, 10))
+	screen.blit(av_score_text, (400, 10))
 
 	for row in range(ROWS):
 		for col in range(COLS):
@@ -53,6 +61,7 @@ def draw_game(screen, map):
 				color = HEAD_COLOR
 			elif cell == "S":
 				color = SNAKE_COLOR
+				# SNAKE_COLOR = tuple(max(0, c - 20) for c in SNAKE_COLOR)
 			
 			if cell != "0":
 				pygame.draw.rect(screen, color, (x_offset, y_offset, SQUARE_SIZE, SQUARE_SIZE))
