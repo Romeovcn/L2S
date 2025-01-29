@@ -1,8 +1,8 @@
 from q_learning.get_state import get_state
 
-def check_key_events(pygame, event, running, need_update, direction, pause, map, snake_pos):
+def check_key_events(pygame, event, running, direction, pause, map, snake_pos):
 	"""
-	Returns: running(True|False), need_update(True|False), direction(direction|None), pause(True|False)
+	Returns: running(True|False), direction(direction|None), pause(True|False)
 	"""
 	if event.type == pygame.QUIT: # Check for QUIT event
 		return False, False, None, False
@@ -11,22 +11,18 @@ def check_key_events(pygame, event, running, need_update, direction, pause, map,
 		key = pygame.key.get_pressed()
 		if key[pygame.K_ESCAPE] or key[pygame.K_q]:
 			running = False
-		if key[pygame.K_w]: #  and pause:
+		elif key[pygame.K_w] and pause: #  and pause:
 			print("UP")
 			direction = "UP"
-			need_update = True
-		elif key[pygame.K_s]: #  and pause:
+		elif key[pygame.K_s] and pause: #  and pause:
 			print("DOWN")
 			direction = "DOWN" 
-			need_update = True
-		elif key[pygame.K_a]: #  and pause:
+		elif key[pygame.K_a] and pause: #  and pause:
 			print("LEFT")
 			direction = "LEFT" 
-			need_update = True
-		elif key[pygame.K_d]: #  and pause:
+		elif key[pygame.K_d] and pause: #  and pause:
 			print("RIGHT")
 			direction = "RIGHT"
-			need_update = True
 		elif key[pygame.K_p]: # Pause the game
 			print("AI is paused")
 			pause = True if not pause else False
@@ -40,4 +36,4 @@ def check_key_events(pygame, event, running, need_update, direction, pause, map,
 		elif key[pygame.K_b]: # Debug print
 			get_state(map, snake_pos)
 	# print(running, need_update, direction, pause)
-	return running, need_update, direction, pause
+	return running, direction, pause

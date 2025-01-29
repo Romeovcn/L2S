@@ -48,7 +48,7 @@ def main():
 	speed = 0.5
 	running = True
 	pause = False
-	epsilon = 1.0
+	epsilon = 0.8
 	min_epsilon = 0.01
 	epsilon_decay = 0.995
 	q_table = {}
@@ -57,7 +57,6 @@ def main():
 		print(f"Episode: {episode}")
 		map, snake_pos = generate_random_map()
 		direction = None
-		need_update = False
 		draw_chessboard(screen, width, height, 3, game_data)
 		draw_game(screen, map)
 		pygame.display.flip()
@@ -66,18 +65,17 @@ def main():
 		while running:
 			# current_time = pygame.time.get_ticks()
 			for event in pygame.event.get():
-					running, need_update, direction, pause = check_key_events(pygame, event, running, need_update, direction, pause, map, snake_pos)
+					running, direction, pause = check_key_events(pygame, event, running, direction, pause, map, snake_pos)
 
-			# if not pause:
-			# 	direction = calculate_next_move(map, snake_pos, epsilon, q_table)
-			# 	epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
+			if not pause:
+				direction = calculate_next_move(map, snake_pos, epsilon, q_table)
+				epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
 
-			# if need_update:
-			# 	print(f"Direction: {direction}")	
-			# 	if perform_move(map, snake_pos, direction, game_data, screen, width, height) == -1:
-			# 		break
-			# 	# direction = None
-			# 	need_update = False
+			if direction:
+				print(f"Direction: {direction}")	
+				if perform_move(map, snake_pos, direction, game_data, screen, width, height) == -1:
+					break
+				direction = None
 
 			# clock.tick(20)
 
@@ -89,22 +87,3 @@ def main():
 if __name__ == "__main__":
 	# cProfile.run('main()')
 	main()
-
-# The Q-Learning Algorithm
-
-# The Q-value (or action-value) represents the quality of a particular action A taken in a specific state S.
-# Specifically, it estimates the expected cumulative reward the agent can achieve if it starts in state S,
-# takes action A, and then follows the optimal policy thereafter.
-
-# Exploration / Exploitation
-
-# This phase is not part of the q-learning algorithm, but it is a common strategy used in reinforcement learning.
-# Common Strategies for Exploration/Exploitation:
-# - Epsilon-Greedy Strategy:
-# - Boltzmann Exploration:
-
-# State and Action
-
-# State are the features that describe the environment. (We must define them)
-# Action would be: UP, DOWN, LEFT, RIGHT
-# State would be: DANGER_RIGHT, DANGER_LEFT, DANGER_UP, DANGER_DOWN, APPLE_RIGHT, APPLE_LEFT, APPLE_UP, APPLE_DOWN
