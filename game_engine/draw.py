@@ -1,16 +1,23 @@
 import pygame
 
-def draw_chessboard(screen, width, height, snake_len, game_data):
+def display_game(map, screen, game_data):
+	if not screen:
+		return
+	draw_chessboard(map, screen, game_data)
+	draw_game(map, screen)
+	pygame.display.flip()
+
+def draw_chessboard(map, screen, game_data):
 	BG_COLOR = (35, 39, 55)
 	SQUARE_COLOR = (24, 24, 36)
 	GREEN_APPLE_COLOR = (255, 0, 0)
 	RED_APPLE_COLOR = (0, 255, 0)
 	WALL_COLOR = (255, 255, 255)
 
-	GAME_SIZE = min(width, height)
-	SQUARE_SIZE = 48
-	ROWS = 12
-	COLS = 12
+	GAME_SIZE = 800 # height minus the top score bar
+	BOARD_SIZE = map.size + 2
+	SQUARE_SIZE = GAME_SIZE // BOARD_SIZE
+
 	best_score = game_data["best_score"]
 	nb_game = game_data["nb_game"]
 	total_score = game_data["total_score"]
@@ -18,37 +25,41 @@ def draw_chessboard(screen, width, height, snake_len, game_data):
 	average_score = round(average_score, 2)
 
 	screen.fill((0, 0, 0)) # Fill the screen with black
-	pygame.draw.rect(screen, BG_COLOR, (100, 100, 598, 598)) # Fill the board
+	pygame.draw.rect(screen, BG_COLOR, (99, 99, (SQUARE_SIZE) * BOARD_SIZE + 1, (SQUARE_SIZE) * BOARD_SIZE + 1)) # Fill the board
+
 	font = pygame.font.Font(None, 36)
-	score_text = font.render(f"Score: {snake_len}", True, (255, 255, 255))
+	score_text = font.render(f"Score: {len(map.snake_pos)}", True, (255, 255, 255))
 	best_score_text = font.render(f"Best Score: {best_score}", True, (255, 255, 255))
 	av_score_text = font.render(f"Average Score: {average_score}", True, (255, 255, 255))
 	screen.blit(score_text, (10, 10))
 	screen.blit(best_score_text, (200, 10))
 	screen.blit(av_score_text, (400, 10))
 
-	for row in range(ROWS):
-		for col in range(COLS):
-			pygame.draw.rect(screen, SQUARE_COLOR, (col * 50 + 100, row * 50 + 100, 48, 48))
+	for row in range(BOARD_SIZE):
+		for col in range(BOARD_SIZE):
+			pygame.draw.rect(screen, SQUARE_COLOR, (col * SQUARE_SIZE + 100, row * SQUARE_SIZE + 100, SQUARE_SIZE-1, SQUARE_SIZE-1))
 
 def draw_snake(screen, snake_pos):
 	pixel_pos = pygame.Vector2(snake_pos[0] * 100 + 50, snake_pos[1] * 100 + 50)
 	pygame.draw.circle(screen, "red", pixel_pos, 50)
 
-def draw_game(screen, map):
+def draw_game(map, screen):
 	GREEN_APPLE_COLOR = (0, 255, 0)
 	RED_APPLE_COLOR = (255, 0, 0)
 	WALL_COLOR = (0, 0, 0)
 	SNAKE_COLOR = (255, 255, 255)
 	HEAD_COLOR = (200, 200, 200)
 
-	FULL_SQUARE_SIZE = 50
-	SQUARE_SIZE = 48
+	GAME_SIZE = 800 # height minus the top score bar
+	BOARD_SIZE = map.size + 2
+	FULL_SQUARE_SIZE = GAME_SIZE // BOARD_SIZE
+	SQUARE_SIZE = FULL_SQUARE_SIZE - 1
+
 	GAME_START_OFFSET = 100
 
-	for y in range(12):
-		for x in range(12):
-			cell = map[y][x]
+	for y in range(map.size + 2):
+		for x in range(map.size + 2):
+			cell = map.map[y][x]
 			x_offset = x * FULL_SQUARE_SIZE + GAME_START_OFFSET
 			y_offset = y * FULL_SQUARE_SIZE + GAME_START_OFFSET
 			if cell == "G":
