@@ -4,15 +4,16 @@ from game_engine.game_algorithm import is_move_legal
 from q_learning.get_state import get_state
 from q_learning.reward import get_reward
 
-def calculate_next_move(map, epsilon, q_table):
+def calculate_next_move(map, epsilon, q_table, learn):
 	possible_moves = get_all_possible_moves(map) # Get list of possible moves
 	state = get_state(map) # Get the current state of the game
-	action = choose_action(epsilon, possible_moves, q_table, state) # Choose between Explore or Exploit
-	q_table[state] = update_q_value(q_table, state, action) # Update the q value of the chosen action
+	action = choose_action(epsilon, possible_moves, q_table, state, learn) # Choose between Explore or Exploit
+	if learn:
+		q_table[state] = update_q_value(q_table, state, action) # Update the q value of the chosen action
 	return action
 
-def choose_action(epsilon, possible_moves, q_table, state):
-	if random.uniform(0, 1) < epsilon: # Explore: choose a random action
+def choose_action(epsilon, possible_moves, q_table, state, learn):
+	if learn and random.uniform(0, 1) < epsilon: # Explore: choose a random action
 		# print("Exploring...")
 		action = select_random_move(possible_moves)
 	else: # Exploit: choose the best known action in q_table

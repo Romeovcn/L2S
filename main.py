@@ -39,11 +39,15 @@ def main():
 	parser.add_argument("--size", type=int, help="Size of the board", required=False, default=10) # Set max size around 50 and min
 	parser.add_argument("--verbose", action="store_true", help="Enable verbose mode", required=False, default=False)
 	parser.add_argument("--save", action="store_true", help="Save q_values in file", required=False, default=False)
-	# parser.add_argument("--learn", action="store_true", help="Enable learning mode", required=False, default=False)
+	parser.add_argument("--learn", action="store_true", help="Enable learning mode", required=False, default=False)
 	# parser.add_argument("--sessions", action="store_true", help="Enable learning mode", required=False, default=False)
 	# parser.add_argument("--load", action="store_true", help="Enable learning mode", required=False, default=False)
+	parser.add_argument("--load", type=str, help="Path to the file of the model", required=False, default=None)
 	args = parser.parse_args()
-	map = Map(args.size)
+
+	if args.size and (args.size < 5 or args.size > 50):
+		print(f"{RED}Size must be between 5 and 50 included{RESET}")
+		return
 
 	if not args.hide_display:
 		pygame.init()
@@ -52,6 +56,8 @@ def main():
 	else:
 		screen = None
 
+
+	map = Map(args.size)
 	game_data = {"epoch": 0, "nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
 	speed = 0.5
 	running = True
@@ -59,7 +65,11 @@ def main():
 	epsilon = 0.8
 	min_epsilon = 0.01
 	epsilon_decay = 0.995
-	q_table = {}
+	if args.load:
+		with open(args.load, "r") as file:
+			q_table = json.load(file)
+	else:
+		q_table = {}
 
 	for episode in range(1000):
 		# print(f"Episode: {episode}")
@@ -72,10 +82,10 @@ def main():
 			# current_time = pygame.time.get_ticks()
 			# for event in pygame.event.get():
 			if not args.hide_display:
-				running, direction, pause = check_key_events(pygame, running, direction, pause, map)
+				running, direction, pause = check_key_events(pygame, running, direction, pause, map, q_table, epsilon, args.learn)
 
 			if not pause:
-				direction = calculate_next_move(map, epsilon, q_table)
+				direction = calculate_next_move(map, epsilon, q_table, args.learn)
 				epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
 		
 			if direction:
@@ -104,7 +114,6 @@ def main():
 	if args.save:
 		with open("q_values.txt", "w") as file:
 			json.dump(q_table, file)
-
 	# with open("q_values.txt", "r") as file:
 	# 	loaded_dict = json.load(file)
 

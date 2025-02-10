@@ -1,10 +1,9 @@
 from q_learning.get_state import get_state
-from q_learning.reward import get_reward
 from q_learning.get_state import get_state
-from game_engine.game_algorithm import get_cell_value_and_coordinates
 from game_engine.game_algorithm import is_move_legal
+from q_learning.ai import calculate_next_move
 
-def check_key_events(pygame, running, direction, pause, map):
+def check_key_events(pygame, running, direction, pause, map, q_table, epsilon, learn):
 	"""
 	Returns: running(True|False), direction(direction|None), pause(True|False)
 	"""
@@ -27,16 +26,17 @@ def check_key_events(pygame, running, direction, pause, map):
 			elif key[pygame.K_p]: # Pause the game
 				print("AI is paused")
 				pause = True if not pause else False
-		# 	# elif key[pygame.K_SPACE]: # Play turn by turn
-		# 		# if pause:
-		# 			# direction = perform_AI_move(map, snake_pos, epsilon, q_table)
+			elif key[pygame.K_SPACE]: # Play turn by turn
+				if pause:
+					direction = calculate_next_move(map, epsilon, q_table, learn)
 		# 	# elif key[pygame.K_UP]: # Augment speed
 		# 	# 	speed = speed - 0.1 if speed - 0.1 > 0 else 0
 		# 	# 	print(f"{GREEN}Speed: {speed}{RESET}")
 		# 	# elif key[pygame.K_DOWN]: # Decrease speed
-			# elif key[pygame.K_b]: # Debug print
-			# 	state = get_state(map, snake_pos)
-			# 	print(f"State: {state}")
+			elif key[pygame.K_b]: # Debug print
+				state = get_state(map)
+				print(f"State: {state}")
+				print(f"Q_values: {q_table[state]}")
 				# for action in ["UP", "DOWN", "LEFT", "RIGHT"]:
 				# 	print(f"{action}: {get_reward(state, action)}")
 	return running, direction, pause

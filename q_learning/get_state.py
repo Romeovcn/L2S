@@ -1,8 +1,7 @@
 def check_up(map):
 	snake_pos = map.snake_pos
-	map = map.map
 	snake_head = snake_pos[0]
-	first_cell = map[snake_head[0] - 1][snake_head[1]]
+	first_cell = map.map[snake_head[0] - 1][snake_head[1]]
 	
 	if len(snake_pos) > 1: 
 		first_body_pos = (snake_pos[1][0], snake_pos[1][1])
@@ -14,24 +13,24 @@ def check_up(map):
 		return (1, 0, 0)
 	if first_cell == "S":
 		return (1, 0, 0)
-	if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
-		return (0, 1, 0)
 	if first_cell == "G": # check if first cell is green apple returns (0, 1, 0)
 		return (0, 0, 1)
-	# print(f"snake_head: {snake_head}")
+	# if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
+	# 	red_apple = 1
+	# 	return (0, 1, 0)
 	i = snake_head[0] - 1
 	while i > 0:
-		# print(f"checking: ({i}, {snake_head[1]})")
-		if map[i][snake_head[1]] == "G":
+		# if map.map[i][snake_head[1]] == "R":
+		# 	red_apple = 1
+		if map.map[i][snake_head[1]] == "G":
 			return (0, 0, 2)
 		i -= 1
 	return (0, 0, 0) # IS_DANGER: Boolean, RED_APPLE: Boolean, GREEN_APPLE: 0: 0, 1: 1, 3: 1 in direction
 
 def check_down(map):
 	snake_pos = map.snake_pos
-	map = map.map
 	snake_head = snake_pos[0]
-	first_cell = map[snake_head[0] + 1][snake_head[1]]
+	first_cell = map.map[snake_head[0] + 1][snake_head[1]]
 
 	if len(snake_pos) > 1: 
 		first_body_pos = (snake_pos[1][0], snake_pos[1][1])
@@ -41,24 +40,23 @@ def check_down(map):
 			return (0, 0, 0)
 	if first_cell == "W" or first_cell == "S":
 		return (1, 0, 0)
-	if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
-		return (0, 1, 0)
+	# if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
+	# 	return (0, 1, 0)
 	if first_cell == "G": # check if first cell is green apple returns (0, 1, 0)
 		return (0, 0, 1)
-	# print(f"snake_head: {snake_head}")
 	i = snake_head[0] + 1
-	while i < 11:
-		# print(f"checking: ({i}, {snake_head[1]})")
-		if map[i][snake_head[1]] == "G":
+	while i < map.size + 1:
+		# if map.map[i][snake_head[1]] == "R":
+		# 	break
+		if map.map[i][snake_head[1]] == "G":
 			return (0, 0, 2)
 		i += 1
 	return (0, 0, 0)
 
 def check_left(map):
 	snake_pos = map.snake_pos
-	map = map.map
 	snake_head = snake_pos[0]
-	first_cell = map[snake_head[0]][snake_head[1] - 1]
+	first_cell = map.map[snake_head[0]][snake_head[1] - 1]
 
 	if len(snake_pos) > 1: 
 		first_body_pos = (snake_pos[1][0], snake_pos[1][1])
@@ -68,24 +66,23 @@ def check_left(map):
 			return (0, 0, 0)
 	if first_cell == "W" or first_cell == "S":
 		return (1, 0, 0)
-	if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
-		return (0, 1, 0)
+	# if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
+	# 	return (0, 1, 0)
 	if first_cell == "G": # check if first cell is green apple returns (0, 1, 0)
 		return (0, 0, 1)
-	# print(f"snake_head: {snake_head}")
 	i = snake_head[1] - 1
 	while i > 0:
-		# print(f"checking: ({i}, {snake_head[1]})")
-		if map[snake_head[0]][i] == "G":
+		# if map.map[snake_head[0]][i] == "R":
+		# 	break
+		if map.map[snake_head[0]][i] == "G":
 			return (0, 0, 2)
 		i -= 1
 	return (0, 0, 0)
 
 def check_right(map):
 	snake_pos = map.snake_pos
-	map = map.map
 	snake_head = snake_pos[0]
-	first_cell = map[snake_head[0]][snake_head[1] + 1]
+	first_cell = map.map[snake_head[0]][snake_head[1] + 1]
 	
 	if len(snake_pos) > 1: 
 		first_body_pos = (snake_pos[1][0], snake_pos[1][1])
@@ -95,15 +92,15 @@ def check_right(map):
 			return (0, 0, 0)
 	if first_cell == "W" or first_cell == "S":
 		return (1, 0, 0)
-	if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
-		return (0, 1, 0)
+	# if first_cell == "R": # check if first cell is red apple returns (0, 1, 0)
+	# 	return (0, 1, 0)
 	if first_cell == "G": # check if first cell is green apple returns (0, 1, 0)
 		return (0, 0, 1)
-	# print(f"snake_head: {snake_head}")
 	i = snake_head[1] + 1
-	while i < 11:
-		# print(f"checking: ({i}, {snake_head[1]})")
-		if map[snake_head[0]][i] == "G":
+	while i < map.size + 1:
+		# if map.map[snake_head[0]][i] == "R":
+		# 	break
+		if map.map[snake_head[0]][i] == "G":
 			return (0, 0, 2)
 		i += 1
 	return (0, 0, 0)
@@ -115,7 +112,7 @@ def get_state(map):
 	DANGER_RIGHT = 0
 	DANGER_LEFT = 0
 
-	# Check if there is a green apple in this direction. 0: No, 1: Yes and no obstacles, 2: Yes in the direct next cell
+	# Check if there is a green apple in this direction. 0: No, 1: Yes in the direct next cell, 2: Yes and no obstacles
 	GREEN_UP = 0
 	GREEN_DOWN = 0
 	GREEN_RIGHT = 0
@@ -169,7 +166,4 @@ def get_state(map):
 	DANGER_RIGHT, RED_RIGHT, GREEN_RIGHT = check_right(map)
 
 	state = f"DU_{DANGER_UP} DD_{DANGER_DOWN} DL_{DANGER_LEFT} DR_{DANGER_RIGHT}, GU_{GREEN_UP} GD_{GREEN_DOWN} GL_{GREEN_LEFT} GR_{GREEN_RIGHT}, RU_{RED_UP} RD_{RED_DOWN} RL_{RED_LEFT} RR_{RED_RIGHT}"
-	# print(state)
 	return state
-
-# DU_{DANGER_UP} DD_{DANGER_DOWN} DL_{DANGER_LEFT} DR_{DANGER_RIGHT}, GU_{GREEN_UP} GD_{GREEN_DOWN} GL_{GREEN_LEFT} GR_{GREEN_RIGHT}, RU_{RED_UP} RD_{RED_DOWN} RL_{RED_LEFT} RR_{RED_RIGHT}
