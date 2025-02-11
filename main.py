@@ -18,7 +18,7 @@ RESET = "\033[0m"
 
 def perform_move(map, direction, game_data):
 	snake_pos = map.snake_pos
-
+	
 	target_cell = get_cell_value_and_coordinates(map, direction)
 	move_validity = is_move_valid(snake_pos, target_cell)
 	if move_validity == -1:
@@ -40,8 +40,7 @@ def main():
 	parser.add_argument("--verbose", action="store_true", help="Enable verbose mode", required=False, default=False)
 	parser.add_argument("--save", action="store_true", help="Save q_values in file", required=False, default=False)
 	parser.add_argument("--learn", action="store_true", help="Enable learning mode", required=False, default=False)
-	# parser.add_argument("--sessions", action="store_true", help="Enable learning mode", required=False, default=False)
-	# parser.add_argument("--load", action="store_true", help="Enable learning mode", required=False, default=False)
+	parser.add_argument("--sessions", type=int, help="Number of sessions", required=False, default=100)
 	parser.add_argument("--load", type=str, help="Path to the file of the model", required=False, default=None)
 	args = parser.parse_args()
 
@@ -56,7 +55,6 @@ def main():
 	else:
 		screen = None
 
-
 	map = Map(args.size)
 	game_data = {"epoch": 0, "nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
 	speed = 0.5
@@ -70,8 +68,9 @@ def main():
 			q_table = json.load(file)
 	else:
 		q_table = {}
+	clock = pygame.time.Clock()
 
-	for episode in range(1000):
+	for episode in range(args.sessions):
 		# print(f"Episode: {episode}")
 		map.generate_random_map()
 		direction = None

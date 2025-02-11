@@ -31,9 +31,11 @@ def draw_chessboard(map, screen, game_data):
 	score_text = font.render(f"Score: {len(map.snake_pos)}", True, (255, 255, 255))
 	best_score_text = font.render(f"Best Score: {best_score}", True, (255, 255, 255))
 	av_score_text = font.render(f"Average Score: {average_score}", True, (255, 255, 255))
+	session_nb__text = font.render(f"Session: {nb_game}", True, (255, 255, 255))
 	screen.blit(score_text, (10, 10))
 	screen.blit(best_score_text, (200, 10))
 	screen.blit(av_score_text, (400, 10))
+	screen.blit(session_nb__text, (600, 10))
 
 	for row in range(BOARD_SIZE):
 		for col in range(BOARD_SIZE):
