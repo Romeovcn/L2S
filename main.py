@@ -56,7 +56,7 @@ def main():
 		screen = None
 
 	map = Map(args.size)
-	game_data = {"epoch": 0, "nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
+	game_data = {"nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
 	speed = 0.5
 	running = True
 	pause = False
@@ -70,30 +70,32 @@ def main():
 		q_table = {}
 	clock = pygame.time.Clock()
 
-	for episode in range(args.sessions):
-		# print(f"Episode: {episode}")
+	for epoch in range(args.sessions):
 		map.generate_random_map()
 		direction = None
+		need_update = None
 		display_game(map, screen, game_data)
+		game_events = {"running": True, "direction": None, "pause": False, "need_update": None}
 		# map.print()
 
 		while running:
 			# current_time = pygame.time.get_ticks()
 			# for event in pygame.event.get():
 			if not args.hide_display:
-				running, direction, pause = check_key_events(pygame, running, direction, pause, map, q_table, epsilon, args.learn)
+				running, direction, pause, need_update = check_key_events(pygame, running, direction, pause, map, q_table, epsilon, args.learn, need_update)
 
 			if not pause:
-				direction = calculate_next_move(map, epsilon, q_table, args.learn)
+				direction = calculate_next_move(map, epsilon, q_table, args.learn, direction)
 				epsilon = max(min_epsilon, epsilon * epsilon_decay) # Decay epsilon
-		
-			if direction:
+				need_update = True
+
+			if need_update:
 				move_validity = perform_move(map, direction, game_data)
 				if move_validity == -1:
 					break
 				display_game(map, screen, game_data)
 				game_data["total_nb_moves"] += 1
-				direction = None
+				need_update = None
 
 			# clock.tick(20)
 			pass
@@ -113,9 +115,6 @@ def main():
 	if args.save:
 		with open("q_values.txt", "w") as file:
 			json.dump(q_table, file)
-	# with open("q_values.txt", "r") as file:
-	# 	loaded_dict = json.load(file)
 
 if __name__ == "__main__":
-	# cProfile.run('main()')
 	main()

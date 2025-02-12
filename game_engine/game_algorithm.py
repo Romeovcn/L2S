@@ -55,11 +55,19 @@ def get_cell_value_and_coordinates(map, direction):
 	target_cell = map.map[pos_to_go[0]][pos_to_go[1]]
 	return {"value": target_cell, "coordinates": pos_to_go}
 
-def is_move_legal(map, direction):
-	snake_pos = map.snake_pos
-	target_cell = get_cell_value_and_coordinates(map, direction)
-	if len(snake_pos) > 1 and target_cell['coordinates'] == snake_pos[1]:
+def is_move_legal(new_direction, old_direction):
+	if new_direction == "UP" and old_direction == "DOWN":
 		return False
+	if new_direction == "DOWN" and old_direction == "UP":
+		return False
+	if new_direction == "LEFT" and old_direction == "RIGHT":
+		return False
+	if new_direction == "RIGHT" and old_direction == "LEFT":
+		return False
+	# snake_pos = map.snake_pos
+	# target_cell = get_cell_value_and_coordinates(map, direction)
+	# if len(snake_pos) > 1 and target_cell['coordinates'] == snake_pos[1]:
+	# 	return False
 	return True
 
 def is_move_valid(snake_pos, target_cell):

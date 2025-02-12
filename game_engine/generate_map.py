@@ -77,7 +77,8 @@ class Map:
 		available_pos = self.get_available_pos()
 		for _ in range(count):
 			if len(available_pos) == 0:
-				print(f"Error: No available position to generate {value} apple")
+				# print(f"Error: No available position to generate {value} apple")
+				return
 			random_position = random.choice(list(available_pos))
 			x, y = random_position
 			self.map[x][y] = value

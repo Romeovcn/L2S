@@ -4,8 +4,8 @@ from game_engine.game_algorithm import is_move_legal
 from q_learning.get_state import get_state
 from q_learning.reward import get_reward
 
-def calculate_next_move(map, epsilon, q_table, learn):
-	possible_moves = get_all_possible_moves(map) # Get list of possible moves
+def calculate_next_move(map, epsilon, q_table, learn, direction):
+	possible_moves = get_all_possible_moves(direction) # Get list of possible moves
 	state = get_state(map) # Get the current state of the game
 	action = choose_action(epsilon, possible_moves, q_table, state, learn) # Choose between Explore or Exploit
 	if learn:
@@ -46,13 +46,13 @@ def get_best_move(q_table, state, possible_moves):
 	action = max(possible_moves, key=Q_values.get)
 	return action
 
-def get_all_possible_moves(map): # Can be optimized
+def get_all_possible_moves(direction): # Can be optimized
 	directions = ["UP", "DOWN", "LEFT", "RIGHT"]
 	possible_moves = []
 
-	for direction in directions:
-		if is_move_legal(map, direction):
-			possible_moves.append(direction)
+	for new_direction in directions:
+		if is_move_legal(new_direction, direction):
+			possible_moves.append(new_direction)
 	return possible_moves
 
 def select_random_move(possible_moves):
