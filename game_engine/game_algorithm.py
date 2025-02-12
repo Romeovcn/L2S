@@ -4,6 +4,24 @@ YELLOW = "\033[33m"
 CYAN = "\033[36m"
 RESET = "\033[0m"
 
+def perform_move(map, direction, game_data):
+	snake_pos = map.snake_pos
+	
+	target_cell = get_cell_value_and_coordinates(map, direction)
+	move_validity = is_move_valid(snake_pos, target_cell)
+	if move_validity == -1:
+		# print(f"{RED}YOU ARE DEAD{RESET}")
+		if len(snake_pos) > game_data["best_score"]:
+			game_data["best_score"] = len(snake_pos)
+		game_data["total_score"] += len(snake_pos)
+		game_data["nb_game"] += 1
+		return -1
+	else:
+		move(map, target_cell)
+		map.update_state()
+		# map.print()
+		return 1
+
 def update_snake_pos(map, target_cell):
 	if target_cell['value'] == "0":
 		map.snake_pos.insert(0, target_cell['coordinates'])

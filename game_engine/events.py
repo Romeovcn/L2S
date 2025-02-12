@@ -1,7 +1,5 @@
-from q_learning.get_state import get_state
-from q_learning.get_state import get_state
 from game_engine.game_algorithm import is_move_legal
-from q_learning.ai import calculate_next_move
+# from q_learning.ai import calculate_next_move
 
 def check_key_events(pygame, running, direction, pause, map, q_table, epsilon, learn, need_update=False):
 	"""
@@ -30,13 +28,12 @@ def check_key_events(pygame, running, direction, pause, map, q_table, epsilon, l
 			elif key[pygame.K_p]: # Pause the game
 				print("AI is paused")
 				pause = True if not pause else False
-			elif key[pygame.K_SPACE] and pause: # Play turn by turn
-				direction = calculate_next_move(map, epsilon, q_table, learn, direction)
-				need_update = True
+			# elif key[pygame.K_SPACE] and pause: # Play turn by turn
+			# 	direction = calculate_next_move(map, epsilon, q_table, learn, direction)
+			# 	need_update = True
 			elif key[pygame.K_b]: # Debug print
-				state = get_state(map)
-				print(f"State: {state}")
-				print(f"Q_values: {q_table[state]}")
+				print(f"State: {map.state}")
+				print(f"Q_values: {q_table[map.state]}")
 				# for action in ["UP", "DOWN", "LEFT", "RIGHT"]:
 				# 	print(f"{action}: {get_reward(state, action)}")
 		# 	# elif key[pygame.K_UP]: # Augment speed

@@ -1,16 +1,24 @@
 import random
 
-from game_engine.game_algorithm import is_move_legal
-from q_learning.get_state import get_state
+from game_engine.game_algorithm import is_move_legal, perform_move
 from q_learning.reward import get_reward
+from game_engine.draw import display_game
 
-def calculate_next_move(map, epsilon, q_table, learn, direction):
+def calculate_next_move(map, epsilon, q_table, learn, direction, screen, game_data):
+	Q = 0
+	r = 0
+
 	possible_moves = get_all_possible_moves(direction) # Get list of possible moves
-	state = get_state(map) # Get the current state of the game
-	action = choose_action(epsilon, possible_moves, q_table, state, learn) # Choose between Explore or Exploit
+	state = map.state
+	action = choose_action(epsilon, possible_moves, q_table, map.state, learn) # Choose between Explore or Exploit
 	if learn:
-		q_table[state] = update_q_value(q_table, state, action) # Update the q value of the chosen action
-	return action
+		update_q_value(q_table, map.state, action)
+	move_validity = perform_move(map, action, game_data)
+	if move_validity == -1:
+		return False, action
+	display_game(map, screen, game_data)
+	game_data["total_nb_moves"] += 1
+	return True, action
 
 def choose_action(epsilon, possible_moves, q_table, state, learn):
 	if learn and random.uniform(0, 1) < epsilon: # Explore: choose a random action
@@ -67,3 +75,19 @@ def update_q_value(q_table, state, action):
 
 	Q_values[action] = Q + 0.1 * (r + gamma * max_Q - Q)
 	return Q_values
+
+# def update_q_value(q_table, reward, previous_Q, state, action):
+# 	Q_values = q_table.get(state, {"UP": 0, "DOWN": 0, "LEFT": 0, "RIGHT": 0})
+# 	Q = Q_values[action]
+# 	max_Q = max(Q_values[action] for action in ["UP", "DOWN", "LEFT", "RIGHT"])
+# 	r = get_reward(state, action)
+# 	gamma = 0.9
+
+# 	Q_values[action] = previous_Q + 0.1 * (r + gamma * max_Q - previous_Q)
+# 	return Q_values
+
+# def get_q_value(q_table, state, action):
+# 	Q_values = q_table.get(state, {"UP": 0, "DOWN": 0, "LEFT": 0, "RIGHT": 0})
+# 	Q = Q_values[action]
+
+# 	return Q
