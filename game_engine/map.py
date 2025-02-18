@@ -150,8 +150,8 @@ class Map:
 		# 	return (0, 1, 0)
 		i = snake_head[0] - 1
 		while i > 0:
-			# if map[i][snake_head[1]] == "R":
-			# 	red_apple = 1
+			if map[i][snake_head[1]] == "S":
+				break
 			if map[i][snake_head[1]] == "G":
 				return (0, 0, 2)
 			i -= 1
@@ -177,8 +177,8 @@ class Map:
 			return (0, 0, 1)
 		i = snake_head[0] + 1
 		while i < self.size + 1:
-			# if map[i][snake_head[1]] == "R":
-			# 	break
+			if map[i][snake_head[1]] == "S":
+				break
 			if map[i][snake_head[1]] == "G":
 				return (0, 0, 2)
 			i += 1
@@ -204,8 +204,8 @@ class Map:
 			return (0, 0, 1)
 		i = snake_head[1] - 1
 		while i > 0:
-			# if map[snake_head[0]][i] == "R":
-			# 	break
+			if map[snake_head[0]][i] == "S":
+				break
 			if map[snake_head[0]][i] == "G":
 				return (0, 0, 2)
 			i -= 1
@@ -231,8 +231,8 @@ class Map:
 			return (0, 0, 1)
 		i = snake_head[1] + 1
 		while i < self.size + 1:
-			# if map[snake_head[0]][i] == "R":
-			# 	break
+			if map[snake_head[0]][i] == "S":
+				break
 			if map[snake_head[0]][i] == "G":
 				return (0, 0, 2)
 			i += 1

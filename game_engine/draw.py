@@ -30,14 +30,24 @@ def draw_chessboard(map, screen, game_data):
     pygame.draw.rect(screen, BG_COLOR, (99, 99, (SQUARE_SIZE) * BOARD_SIZE + 1, (SQUARE_SIZE) * BOARD_SIZE + 1)) # Fill the board
 
     font = pygame.font.Font(None, 36)
+    p_key = font.render(f"[P] To pause the game", True, (255, 255, 255))
+    space_key = font.render(f"[SPACE] To get next agent move", True, (255, 255, 255))
+    escape_key = font.render(f"[ESC] or [Q] Exit the game", True, (255, 255, 255))
+    score_text = font.render(f"[UP] To increase speed", True, (255, 255, 255))
+    score_text = font.render(f"[DOWN] To decrease speed", True, (255, 255, 255))
+    screen.blit(p_key, (100, 10))
+    screen.blit(space_key, (100, 40))
+    screen.blit(escape_key, (100, 70))
+    # score_text = font.render(f"[A] To decrease", True, (255, 255, 255))
+
     score_text = font.render(f"Score: {len(map.snake_pos)}", True, (255, 255, 255))
     best_score_text = font.render(f"Best Score: {best_score}", True, (255, 255, 255))
     av_score_text = font.render(f"Average Score: {average_score}", True, (255, 255, 255))
     session_nb__text = font.render(f"Session: {nb_game}", True, (255, 255, 255))
-    screen.blit(score_text, (10, 10))
-    screen.blit(best_score_text, (200, 10))
-    screen.blit(av_score_text, (400, 10))
-    screen.blit(session_nb__text, (600, 10))
+    screen.blit(score_text, (950, 100))
+    screen.blit(best_score_text, (950, 130))
+    screen.blit(av_score_text, (950, 160))
+    screen.blit(session_nb__text, (950, 190))
 
     for row in range(BOARD_SIZE):
         for col in range(BOARD_SIZE):

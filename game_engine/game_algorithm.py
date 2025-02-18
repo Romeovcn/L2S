@@ -62,6 +62,7 @@ def get_cell_value_and_coordinates(map, direction):
 
 
 def is_move_legal(new_direction, old_direction):
+    # print(f"old direction: {old_direction}: new direction: {new_direction}")
     if new_direction == "UP" and old_direction == "DOWN":
         return False
     if new_direction == "DOWN" and old_direction == "UP":
@@ -70,6 +71,7 @@ def is_move_legal(new_direction, old_direction):
         return False
     if new_direction == "RIGHT" and old_direction == "LEFT":
         return False
+    # if 
     return True
 
 

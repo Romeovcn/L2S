@@ -3,9 +3,9 @@ import argparse
 import json
 
 from game_engine.game_algorithm import get_cell_value_and_coordinates, is_move_valid, move
-from game_engine.generate_map import Map
+from game_engine.map import Map
 from game_engine.draw import display_game
-from game_engine.events import check_key_events
+from game_engine.events import check_key_events, check_key_events_test
 from q_learning.ai import calculate_next_move
 
 RED = "\033[31m"
@@ -39,7 +39,10 @@ def check_death_and_move(screen, map, game_settings, game_data, flags):
     move(map, target_cell)
     map.update_state()
     display_game(map, screen, game_data)
-    # map.print()
+
+    if game_settings['verbose']:
+        print(game_settings['direction'])
+        map.print()
     return False
 
 
@@ -63,7 +66,7 @@ def get_and_parse_args():
 def get_pygame_screen(hide_display):
     if not hide_display:
         pygame.init()
-        screen = pygame.display.set_mode((1300, 900), pygame.NOFRAME)
+        screen = pygame.display.set_mode((1300, 900))
         pygame.display.set_caption("Snake AI")
     else:
         screen = None
@@ -82,9 +85,25 @@ def get_q_table(load):
 def print_results(game_data):
     print(f"Best Score: {game_data['best_score']}")
     print(f"Number of Games: {game_data['nb_game']}")
-    print(f"Total scores: {game_data['total_score']}")
     if game_data['total_score'] > 0: print(f"Average Score: {game_data['total_score'] / game_data['nb_game']}")
     if game_data['total_nb_moves'] > 0: print(f"Average moves: {game_data['total_nb_moves'] / game_data['nb_game']}")
+
+
+def get_default_direction(map):
+    snake_pos = map.snake_pos
+    snake_head_pos = snake_pos[0]
+    snake_body_pos = snake_pos[1]
+
+    if snake_head_pos[0] == snake_body_pos[0]:
+        if snake_head_pos[1] < snake_body_pos[1]:
+            return "LEFT"
+        else:
+            return "RIGHT"
+    else:
+        if snake_head_pos[0] < snake_body_pos[0]:
+            return "UP"
+        else:
+            return "DOWN"
 
 
 def main():
@@ -93,24 +112,29 @@ def main():
     map = Map(args.size)
     screen = get_pygame_screen(args.hide_display)
     q_table = get_q_table(args.load)
+    last_action_time = 0
 
     game_data = {"nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
-    game_settings = {"speed": 0.5, "epsilon": 0.8, "direction": None, "learn": args.learn}	
+    game_settings = {"speed": 0, "epsilon": 0.8, "direction": None, "learn": args.learn, "verbose": args.verbose}	
     flags = {"running": True, "pause": False, "need_update": False}
+    clock = pygame.time.Clock()
 
     # --------------- Game and agent training loop --------------- #
     for _ in range(args.sessions):
         map.generate_random_map()
         display_game(map, screen, game_data)
+        game_settings['direction'] = get_default_direction(map)
 
         while flags["running"]:
             if not args.hide_display:
-                check_key_events(pygame, map, q_table, game_settings, flags)
+                check_key_events_test(pygame, map, q_table, game_settings, flags)
 
-            if not flags["pause"]:
+            if not flags["pause"] and not flags['need_update']:
                 game_settings['direction'] = calculate_next_move(map, q_table, game_settings, flags)
 
-            if flags['need_update']:
+            current_time = pygame.time.get_ticks()
+            if flags['need_update'] and current_time - last_action_time >= game_settings['speed']:
+                last_action_time = current_time
                 if check_death_and_move(screen, map, game_settings, game_data, flags):
                     break
 
