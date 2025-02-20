@@ -74,12 +74,20 @@ def get_pygame_screen(hide_display):
 
 
 def get_q_table(load):
-    if load:
-        with open(load, "r") as file:
-            q_table = json.load(file)
-    else:
-        q_table = {}
-    return q_table
+    try:
+        if load:
+            with open(load, "r") as file:
+                q_table = json.load(file)
+            return q_table
+        else:
+            q_table = {}
+            return q_table
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+    except FileNotFoundError:
+        print("Error: File not found.")
+    except OSError as e:
+        print(f"Error opening file: {e}")
 
 
 def print_results(game_data):
@@ -117,7 +125,6 @@ def main():
     game_data = {"nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
     game_settings = {"speed": 0, "epsilon": 0.8, "direction": None, "learn": args.learn, "verbose": args.verbose}	
     flags = {"running": True, "pause": False, "need_update": False}
-    clock = pygame.time.Clock()
 
     # --------------- Game and agent training loop --------------- #
     for _ in range(args.sessions):

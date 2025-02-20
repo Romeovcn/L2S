@@ -36,24 +36,6 @@ def get_best_move(q_table, state, possible_moves):
     Q_values = q_table.get(state, None)
     if Q_values is None:
         return select_random_move(possible_moves)
-
-    # best_moves = []
-    # best_value = None
-
-    # for move in possible_moves:
-    # 	if len(best_moves) == 0:
-    # 		best_moves.append(move)
-    # 		best_value = Q_values[move]
-    # 	elif Q_values[move] == best_value:
-    # 		best_moves.append(move)
-    # 	elif Q_values[move] > best_value:
-    # 		best_moves.clear()
-    # 		best_moves.append(move)
-    # 		best_value = Q_values[move]
-
-    # if len(best_moves) > 1:
-    # 	return select_random_move(best_moves)
-    # return best_moves[0]
     action = max(possible_moves, key=Q_values.get)
     return action
 
