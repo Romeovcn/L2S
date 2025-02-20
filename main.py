@@ -1,11 +1,12 @@
 import pygame
 import argparse
 import json
+import os
 
 from game_engine.game_algorithm import get_cell_value_and_coordinates, is_move_valid, move
 from game_engine.map import Map
 from game_engine.draw import display_game
-from game_engine.events import check_key_events, check_key_events_test
+from game_engine.events import check_key_events_test
 from q_learning.ai import calculate_next_move
 
 RED = "\033[31m"
@@ -48,18 +49,33 @@ def check_death_and_move(screen, map, game_settings, game_data, flags):
 
 def get_and_parse_args():
     parser = argparse.ArgumentParser(description="Q-Learning Snake AI")
-    parser.add_argument("--hide-display", dest="hide_display", action="store_true", help="Hide the display of the game", default=False)
-    parser.add_argument("--size", type=int, help="Size of the board", required=False, default=10)
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose mode", required=False, default=False)
-    parser.add_argument("--save", action="store_true", help="Save q_values in file", required=False, default=False)
-    parser.add_argument("--learn", action="store_true", help="Enable learning mode", required=False, default=False)
-    parser.add_argument("--sessions", type=int, help="Number of sessions", required=False, default=100)
-    parser.add_argument("--load", type=str, help="Path to the file of the model", required=False, default=None)
+    parser.add_argument("--hide-display", dest="hide_display",
+                        action="store_true", help="Hide the display",
+                        default=False)
+    parser.add_argument("--size", type=int, help="Size of the board",
+                        default=10)
+    parser.add_argument("--verbose", action="store_true", help="Set verbose",
+                        default=False)
+    parser.add_argument("--save", type=str, help="Save q_values in file",
+                        default=None)
+    parser.add_argument("--learn", action="store_true", help="Set learning",
+                        default=False)
+    parser.add_argument("--sessions", type=int, help="Number of sessions",
+                        default=100)
+    parser.add_argument("--load", type=str, help="Load existing model",
+                        default=None)
     args = parser.parse_args()
 
     if args.size and (args.size < 5 or args.size > 50):
         print(f"{RED}Size must be between 5 and 50 included{RESET}")
         exit()
+
+    if args.load:
+        path = os.path.join("./models/", args.load)
+        if not os.path.exists(path):
+            print(f"{RED}Loaded model doesn't exist{RESET}")
+            exit()
+
     return args
 
 
@@ -75,13 +91,14 @@ def get_pygame_screen(hide_display):
 
 def get_q_table(load):
     try:
-        if load:
-            with open(load, "r") as file:
+        path = os.path.join("./models/", load)
+        if load and os.path.exists(path):
+            path = os.path.join("./models", load)
+            with open(path, "r") as file:
                 q_table = json.load(file)
             return q_table
         else:
-            q_table = {}
-            return q_table
+            return {}
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
     except FileNotFoundError:
@@ -93,8 +110,12 @@ def get_q_table(load):
 def print_results(game_data):
     print(f"Best Score: {game_data['best_score']}")
     print(f"Number of Games: {game_data['nb_game']}")
-    if game_data['total_score'] > 0: print(f"Average Score: {game_data['total_score'] / game_data['nb_game']}")
-    if game_data['total_nb_moves'] > 0: print(f"Average moves: {game_data['total_nb_moves'] / game_data['nb_game']}")
+    if game_data['total_score'] > 0:
+        average_score = game_data['total_score'] / game_data['nb_game']
+        print(f"Average Score: {average_score}")
+    if game_data['total_nb_moves'] > 0:
+        average_move = game_data['total_nb_moves'] / game_data['nb_game']
+        print(f"Average moves: {average_move}")
 
 
 def get_default_direction(map):
@@ -155,7 +176,8 @@ def main():
     print_results(game_data)
 
     if args.save:
-        with open("q_values.txt", "w") as file:
+        path = os.path.join("./models", args.save)
+        with open(path, "w") as file:
             json.dump(q_table, file)
 
 
