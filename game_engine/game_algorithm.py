@@ -15,7 +15,6 @@ def update_snake_pos(map, target_cell):
         map.snake_pos.insert(0, target_cell['coordinates'])
         map.snake_pos.pop()
         map.snake_pos.pop()
-    # return snake_pos
 
 
 def erase_old_snake(map):
@@ -37,12 +36,15 @@ def update_map(map, target_cell):
 
 
 def move(map, target_cell):
-    erase_old_snake(map)  # Can be optimized by only erasing the last cell of the snake
+    erase_old_snake(map)
     update_snake_pos(map, target_cell)
     update_map(map, target_cell['value'])
 
 
-def get_cell_value_and_coordinates(map, direction):
+def get_target_cell(map, direction):
+    """
+    returns: {"value": char, "coordinates": [x, y]}
+    """
     snake_pos = map.snake_pos
     snake_head_pos = snake_pos[0]
 
@@ -61,8 +63,7 @@ def get_cell_value_and_coordinates(map, direction):
     return {"value": target_cell, "coordinates": pos_to_go}
 
 
-def is_move_legal(new_direction, old_direction):
-    # print(f"old direction: {old_direction}: new direction: {new_direction}")
+def is_mv_legal(new_direction, old_direction):
     if new_direction == "UP" and old_direction == "DOWN":
         return False
     if new_direction == "DOWN" and old_direction == "UP":
@@ -71,7 +72,6 @@ def is_move_legal(new_direction, old_direction):
         return False
     if new_direction == "RIGHT" and old_direction == "LEFT":
         return False
-    # if 
     return True
 
 
@@ -83,7 +83,7 @@ def is_move_valid(snake_pos, target_cell):
         return 1
     if target_cell['value'] == "W":  # Hit a wall
         return -1
-    if target_cell['value'] == "R" and len(snake_pos) == 1:  # Hit size 0 with red apple
+    if target_cell['value'] == "R" and len(snake_pos) == 1:
         return -1
     if target_cell['value'] == "S":
         return -1

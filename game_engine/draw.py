@@ -62,11 +62,6 @@ def draw_chessboard(map, screen, game_data):
             pygame.draw.rect(screen, SQUARE_COLOR, rect)
 
 
-def draw_snake(screen, snake_pos):
-    pixel_pos = pygame.Vector2(snake_pos[0] * 100 + 50, snake_pos[1] * 100 + 50)
-    pygame.draw.circle(screen, "red", pixel_pos, 50)
-
-
 def draw_game(map, screen):
     GREEN_APPLE_COLOR = (0, 255, 0)
     RED_APPLE_COLOR = (255, 0, 0)
@@ -74,7 +69,7 @@ def draw_game(map, screen):
     SNAKE_COLOR = (255, 255, 255)
     HEAD_COLOR = (200, 200, 200)
 
-    GAME_SIZE = 800  # height minus the top score bar
+    GAME_SIZE = 800
     BOARD_SIZE = map.size + 2
     FULL_SQUARE_SIZE = GAME_SIZE // BOARD_SIZE
     SQUARE_SIZE = FULL_SQUARE_SIZE - 1
@@ -96,7 +91,6 @@ def draw_game(map, screen):
                 color = HEAD_COLOR
             elif cell == "S":
                 color = SNAKE_COLOR
-                # SNAKE_COLOR = tuple(max(0, c - 20) for c in SNAKE_COLOR)
 
             if cell != "0":
                 rect = (x_offset, y_offset, SQUARE_SIZE, SQUARE_SIZE)

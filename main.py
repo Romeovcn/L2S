@@ -3,11 +3,11 @@ import argparse
 import json
 import os
 
-from game_engine.game_algorithm import get_cell_value_and_coordinates, is_move_valid, move
+from game_engine.game_algorithm import get_target_cell, is_move_valid, move
 from game_engine.map import Map
 from game_engine.draw import display_game
-from game_engine.events import check_key_events_test
-from q_learning.ai import calculate_next_move
+from game_engine.events import check_key_events
+from q_learning.ai import calc_move
 
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -29,8 +29,8 @@ def is_dead(map, target_cell, game_data):
     return False
 
 
-def check_death_and_move(screen, map, game_settings, game_data, flags):
-    target_cell = get_cell_value_and_coordinates(map, game_settings['direction'])
+def check_death_n_move(screen, map, settings, game_data, flags):
+    target_cell = get_target_cell(map, settings['dir'])
     game_data["total_nb_moves"] += 1
     flags['need_update'] = False
 
@@ -41,8 +41,8 @@ def check_death_and_move(screen, map, game_settings, game_data, flags):
     map.update_state()
     display_game(map, screen, game_data)
 
-    if game_settings['verbose']:
-        print(game_settings['direction'])
+    if settings['verbose']:
+        print(settings['dir'])
         map.print()
     return False
 
@@ -91,9 +91,8 @@ def get_pygame_screen(hide_display):
 
 def get_q_table(load):
     try:
-        path = os.path.join("./models/", load)
-        if load and os.path.exists(path):
-            path = os.path.join("./models", load)
+        if load:
+            path = os.path.join("./models/", load)
             with open(path, "r") as file:
                 q_table = json.load(file)
             return q_table
@@ -110,11 +109,12 @@ def get_q_table(load):
 def print_results(game_data):
     print(f"Best Score: {game_data['best_score']}")
     print(f"Number of Games: {game_data['nb_game']}")
-    if game_data['total_score'] > 0:
+
+    if game_data['nb_game'] > 0:
         average_score = game_data['total_score'] / game_data['nb_game']
-        print(f"Average Score: {average_score}")
-    if game_data['total_nb_moves'] > 0:
         average_move = game_data['total_nb_moves'] / game_data['nb_game']
+
+        print(f"Average Score: {average_score}")
         print(f"Average moves: {average_move}")
 
 
@@ -141,29 +141,31 @@ def main():
     map = Map(args.size)
     screen = get_pygame_screen(args.hide_display)
     q_table = get_q_table(args.load)
-    last_action_time = 0
+    last_c_t = 0
 
-    game_data = {"nb_game": 0, "total_score": 0, "best_score": 0, "total_nb_moves": 0}
-    game_settings = {"speed": 0, "epsilon": 0.8, "direction": None, "learn": args.learn, "verbose": args.verbose}	
+    game_data = {"nb_game": 0, "total_score": 0,
+                 "best_score": 0, "total_nb_moves": 0}
+    settings = {"speed": 0, "epsilon": 0.8, "dir": None,
+                "learn": args.learn, "verbose": args.verbose}
     flags = {"running": True, "pause": False, "need_update": False}
 
     # --------------- Game and agent training loop --------------- #
     for _ in range(args.sessions):
         map.generate_random_map()
         display_game(map, screen, game_data)
-        game_settings['direction'] = get_default_direction(map)
+        settings['dir'] = get_default_direction(map)
 
         while flags["running"]:
             if not args.hide_display:
-                check_key_events_test(pygame, map, q_table, game_settings, flags)
+                check_key_events(pygame, map, q_table, settings, flags)
 
             if not flags["pause"] and not flags['need_update']:
-                game_settings['direction'] = calculate_next_move(map, q_table, game_settings, flags)
+                settings['dir'] = calc_move(map, q_table, settings, flags)
 
-            current_time = pygame.time.get_ticks()
-            if flags['need_update'] and current_time - last_action_time >= game_settings['speed']:
-                last_action_time = current_time
-                if check_death_and_move(screen, map, game_settings, game_data, flags):
+            c_t = pygame.time.get_ticks()
+            if flags['need_update'] and c_t - last_c_t >= settings['speed']:
+                last_c_t = c_t
+                if check_death_n_move(screen, map, settings, game_data, flags):
                     break
 
         if not flags["running"]:
