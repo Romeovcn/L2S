@@ -43,7 +43,7 @@ def check_death_n_move(screen, map, settings, game_data, flags):
 
     if settings['verbose']:
         print(settings['dir'])
-        map.print()
+        map.print_snake_vision()
     return False
 
 
@@ -100,10 +100,13 @@ def get_q_table(load):
             return {}
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
+        exit(1)
     except FileNotFoundError:
         print("Error: File not found.")
+        exit(1)
     except OSError as e:
         print(f"Error opening file: {e}")
+        exit(1)
 
 
 def print_results(game_data):
@@ -135,13 +138,35 @@ def get_default_direction(map):
             return "DOWN"
 
 
+def has_all_keys(d):
+    required_keys = {"UP", "DOWN", "LEFT", "RIGHT"}
+    return required_keys.issubset(d.keys())
+
+
+def check_q_table(q_table):
+    required_keys = {"UP", "DOWN", "LEFT", "RIGHT"}
+
+    for key, value in q_table.items():
+        if not isinstance(value, dict):
+            print("INVALID Q_VALUE")
+            exit(1)
+        if not required_keys.issubset(value.keys()):
+            print("MISSING Q_VALUE")
+            exit(1)
+        for k, v in value.items():
+            if not isinstance(v, (int, float)):
+                print("Q_VALUE IS NOT AN INT")
+                exit(1)
+
+
 def main():
     # --------------- Define variables --------------- #
     args = get_and_parse_args()
     map = Map(args.size)
-    screen = get_pygame_screen(args.hide_display)
     q_table = get_q_table(args.load)
+    check_q_table(q_table)
     last_c_t = 0
+    screen = get_pygame_screen(args.hide_display)
 
     game_data = {"nb_game": 0, "total_score": 0,
                  "best_score": 0, "total_nb_moves": 0}

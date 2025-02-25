@@ -61,6 +61,18 @@ class Map:
         self.score = 3
         self.update_state()
 
+    def print_snake_vision(self):
+        snake_y = self.snake_pos[0][0]
+        snake_x = self.snake_pos[0][1]
+        for y, row in enumerate(self.map):
+            for x, cell in enumerate(row):
+                if x == snake_x or y == snake_y:
+                    print(cell, end='')
+                else:
+                    print(" ", end='')
+            print()
+        print()
+
     def print(self):
         for row in self.map:
             for cell in row:
