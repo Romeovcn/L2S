@@ -24,6 +24,18 @@ def check_key_events(pygame, map, q_table, settings, flags):
                 else:
                     print(f"{YELLOW}[i] AI is paused{RST}")
                 flags['pause'] = not flags['pause']
+            elif key[pygame.K_UP]:
+                if settings['speed'] - 20 < 0:
+                    settings['speed'] = 0
+                else:
+                    settings['speed'] -= 20
+                print(f"{YELLOW}[i] Speed increase: {settings['speed']}{RST}")
+            elif key[pygame.K_DOWN]:
+                if settings['speed'] + 20 > 500:
+                    settings['speed'] = 500
+                else:
+                    settings['speed'] += 20
+                print(f"{YELLOW}[i] Speed decrease: {settings['speed']}{RST}")
             elif flags['pause']:
                 if key[pygame.K_w] and is_mv_legal("UP", settings['dir']):
                     flags['need_update'] = True
@@ -43,16 +55,3 @@ def check_key_events(pygame, map, q_table, settings, flags):
                 elif key[pygame.K_b]:
                     print(f"State: {map.state}")
                     print(f"Q_values: {q_table[map.state]}")
-
-            elif key[pygame.K_UP]:
-                if settings['speed'] - 20 < 0:
-                    settings['speed'] = 0
-                else:
-                    settings['speed'] -= 20
-                print(f"{YELLOW}[i] Speed increase: {settings['speed']}{RST}")
-            elif key[pygame.K_DOWN]:
-                if settings['speed'] + 20 > 500:
-                    settings['speed'] = 500
-                else:
-                    settings['speed'] += 20
-                print(f"{YELLOW}[i] Speed decrease: {settings['speed']}{RST}")

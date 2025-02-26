@@ -1,0 +1,1 @@
+{"DU_0 DD_1 DL_0 DR_0, GU_0 GD_0 GL_0 GR_0, RU_0 RD_0 RL_0 RR_0": {"UP": 0, "DOWN": -10.0, "LEFT": 0.0, "RIGHT": 0}, "DU_0 DD_1 DL_0 DR_0, GU_2 GD_0 GL_0 GR_0, RU_0 RD_0 RL_0 RR_0": {"UP": 0, "DOWN": 0, "LEFT": -1.0, "RIGHT": 0}}

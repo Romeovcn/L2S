@@ -64,6 +64,10 @@ def get_and_parse_args():
                         default=100)
     parser.add_argument("--load", type=str, help="Load existing model",
                         default=None)
+    parser.add_argument("--step-by-step", dest="step_by_step",
+                        action="store_true", help="Set step-by-set mode",
+                        default=False)
+
     args = parser.parse_args()
 
     if args.size and (args.size < 5 or args.size > 50):
@@ -172,7 +176,7 @@ def main():
                  "best_score": 0, "total_nb_moves": 0}
     settings = {"speed": 0, "epsilon": 0.8, "dir": None,
                 "learn": args.learn, "verbose": args.verbose}
-    flags = {"running": True, "pause": False, "need_update": False}
+    flags = {"running": True, "pause": args.step_by_step, "need_update": False}
 
     # --------------- Game and agent training loop --------------- #
     for _ in range(args.sessions):
