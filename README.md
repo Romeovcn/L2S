@@ -1,26 +1,55 @@
-Le projet Learn2Slither de l'école 42 est une introduction pratique à l'apprentissage par renforcement (Reinforcement Learning) appliqué au célèbre jeu Snake. L'objectif est de développer un agent intelligent capable de contrôler un serpent sur un plateau de jeu, en apprenant à maximiser ses récompenses grâce à l'expérience.
+---
 
-🎯 Objectif du projet
-Créer une intelligence artificielle qui apprend à jouer à Snake en interagissant avec un environnement défini, en recevant des récompenses ou des pénalités selon ses actions, et en adaptant son comportement pour optimiser ses performances au fil du temps.
+# 🐍 Learn2Slither
 
-🧩 Composants principaux
-Environnement / Plateau
-Définir le plateau de jeu avec ses dimensions, les obstacles, la nourriture, et les règles de déplacement du serpent.
+**Learn2Slither** est un projet d'intelligence artificielle basé sur l’apprentissage par renforcement. Le but est de créer un agent intelligent capable de jouer au jeu **Snake**, en apprenant à maximiser ses récompenses grâce à l’expérience accumulée.
 
-État
-Représenter l'état actuel du jeu, incluant la position du serpent, de la nourriture, et d'autres éléments pertinents pour la prise de décision.
+---
 
-Actions
-Déterminer les actions possibles que le serpent peut entreprendre (par exemple, se déplacer vers le haut, le bas, la gauche ou la droite).
+## 🎯 Objectif
 
-Récompenses
-Attribuer des valeurs positives ou négatives en fonction des actions du serpent, comme manger de la nourriture (récompense positive) ou heurter un mur (récompense négative).
+Développer une IA qui apprend à jouer à Snake en :
 
-Q-learning
-Implémenter l'algorithme de Q-learning pour permettre à l'agent d'apprendre une politique optimale en mettant à jour une table de valeurs Q basée sur les expériences passées.
+* Interagissant avec un environnement défini
+* Recevant des récompenses ou pénalités
+* Adaptant ses actions pour maximiser ses performances
 
-Structure technique
-Organiser le code de manière modulaire et propre, en respectant les normes de codage, notamment si le projet est réalisé en Python.
+---
 
-🧪 Bonus
-Le projet propose également des parties bonus pour aller plus loin, telles que l'amélioration de l'algorithme d'apprentissage, l'ajout de fonctionnalités supplémentaires au jeu, ou l'optimisation des performances de l'agent.
+## 🧩 Composants du projet
+
+### 📦 Environnement
+
+Définition du plateau : taille, obstacles, position de la nourriture, règles de déplacement.
+
+### 📍 État
+
+Représentation des données utiles à l'IA : position du serpent, de la nourriture, direction, collisions potentielles.
+
+### 🔁 Actions
+
+Liste des actions possibles : aller à gauche, droite, en haut, en bas.
+
+### 💰 Récompenses
+
+* Manger une pomme ou se rapprocher d'une pomme : récompense positive
+* Heurter un mur ou soi-même : récompense négative
+* S'éloigner d'une pomme : récompense négative 
+
+### 🧠 Q-Learning
+
+Implémentation de l’algorithme de **Q-learning** :
+
+* Utilisation d’une table de valeurs Q
+* Mise à jour selon l’expérience vécue par l’agent
+* Apprentissage d’une stratégie optimale
+
+---
+
+## 🧪 Bonus possibles
+
+* Ajout de nouveaux mécanismes de jeu
+* Optimisation de l’apprentissage (e.g. epsilon decay, experience replay)
+* Visualisation des performances
+
+---
