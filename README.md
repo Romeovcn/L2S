@@ -44,7 +44,7 @@ Implémentation de l’algorithme de **Q-learning** :
 
 ---
 
-## 🧪 Bonus possibles
+## 🧪 Bonus
 
 * Ajout de nouveaux mécanismes de jeu
 * Optimisation de l’apprentissage (e.g. epsilon decay, experience replay)
