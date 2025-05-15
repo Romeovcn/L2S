@@ -1,5 +1,3 @@
----
-
 # 🐍 Learn2Slither
 
 **Learn2Slither** est un projet d'intelligence artificielle basé sur l’apprentissage par renforcement. Le but est de créer un agent intelligent capable de jouer au jeu **Snake**, en apprenant à maximiser ses récompenses grâce à l’expérience accumulée.
